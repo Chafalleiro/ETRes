@@ -1,5 +1,9 @@
 # ETResPackage - Windows Resource File (.res) Management
 
+[![Version](https://img.shields.io/badge/version-0.1-blue)](https://github.com/Chafalleiro/ETRes/releases)
+
+[![License](https://img.shields.io/badge/license-MTL-green)](LICENSE)
+
 This package provides a set of units and visual components for reading, editing, importing, and exporting Windows resource files (.res). It includes a functional API (`uResOperations`) that can be used directly in console or GUI applications, as well as two visual components for Lazarus/Typhon: `TETResExplorer` (viewer) and `TETResEdit` (editor).
 
 ## Package Contents
