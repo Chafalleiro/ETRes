@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="5">
+    <PathDelim Value="\"/>
+    <Name Value="etrespackage"/>
+    <Type Value="RunAndDesignTime"/>
+    <HasRegisterProc Value="True"/>
+    <ComponentCount Value="4"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)\$(LCLWidgetType)"/>
+      </SearchPaths>
+      <Other>
+        <CustomOptions Value="$(IDEBuildOptions)"/>
+      </Other>
+    </CompilerOptions>
+    <Files Count="13">
+      <Item1>
+        <Filename Value="udebug.pas"/>
+        <UnitName Value="uDebug"/>
+      </Item1>
+      <Item2>
+        <Filename Value="uFileDetect.pas"/>
+        <UnitName Value="uFileDetect"/>
+      </Item2>
+      <Item3>
+        <Filename Value="uaddres.pas"/>
+        <FRMtype Value="200"/>
+        <UnitName Value="uAddRes"/>
+      </Item3>
+      <Item4>
+        <Filename Value="umimedetect.pas"/>
+        <UnitName Value="uMimeDetect"/>
+      </Item4>
+      <Item5>
+        <Filename Value="uResDefs.pas"/>
+        <UnitName Value="uResDefs"/>
+      </Item5>
+      <Item6>
+        <Filename Value="uResFile.pas"/>
+        <UnitName Value="uResFile"/>
+      </Item6>
+      <Item7>
+        <Filename Value="uResFileIO.pas"/>
+        <UnitName Value="uResFileIO"/>
+      </Item7>
+      <Item8>
+        <Filename Value="uResManager.pas"/>
+        <UnitName Value="uResManager"/>
+      </Item8>
+      <Item9>
+        <Filename Value="uResOperations.pas"/>
+        <UnitName Value="uResOperations"/>
+      </Item9>
+      <Item10>
+        <Filename Value="uResUtils.pas"/>
+        <UnitName Value="uResUtils"/>
+      </Item10>
+      <Item11>
+        <Filename Value="uaddres.frm"/>
+        <Type Value="FRM"/>
+        <FRMtype Value="100"/>
+      </Item11>
+      <Item12>
+        <Filename Value="etrescontrols.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="ETResControls"/>
+      </Item12>
+      <Item13>
+        <Filename Value="etresdsgn.pas"/>
+        <UnitName Value="ETResDsgn"/>
+      </Item13>
+    </Files>
+    <CompatibilityMode Value="True"/>
+    <RequiredPkgs Count="2">
+      <Item1>
+        <PackageName Value="pl_VirtualTrees"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="adFCL"/>
+      </Item2>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <OpenInFileMan Value="True"/>
+      <UseFileFilters Value="True"/>
+      <FileFilter Value="*.(pas|pp|inc|ppr|frm|ctrs|ctpr|ctpkg|xml|sh|res|ctpkg|ctrs|md|html)"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

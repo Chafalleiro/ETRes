@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="5">
+    <PathDelim Value="\"/>
+    <Name Value="EtResPackageLazarus"/>
+    <Type Value="RunAndDesignTime"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Files>
+      <Item>
+        <Filename Value="uaddres.lfm"/>
+        <Type Value="LFM"/>
+      </Item>
+      <Item>
+        <Filename Value="uaddres.pas"/>
+        <UnitName Value="uAddRes"/>
+      </Item>
+      <Item>
+        <Filename Value="udebug.pas"/>
+        <UnitName Value="uDebug"/>
+      </Item>
+      <Item>
+        <Filename Value="uFileDetect.pas"/>
+        <UnitName Value="uFileDetect"/>
+      </Item>
+      <Item>
+        <Filename Value="umimedetect.pas"/>
+        <UnitName Value="uMimeDetect"/>
+      </Item>
+      <Item>
+        <Filename Value="uResDefs.pas"/>
+        <UnitName Value="uResDefs"/>
+      </Item>
+      <Item>
+        <Filename Value="uResFile.pas"/>
+        <UnitName Value="uResFile"/>
+      </Item>
+      <Item>
+        <Filename Value="uResFileIO.pas"/>
+        <UnitName Value="uResFileIO"/>
+      </Item>
+      <Item>
+        <Filename Value="uResManager.pas"/>
+        <UnitName Value="uResManager"/>
+      </Item>
+      <Item>
+        <Filename Value="uResOperations.pas"/>
+        <UnitName Value="uResOperations"/>
+      </Item>
+      <Item>
+        <Filename Value="uResUtils.pas"/>
+        <UnitName Value="uResUtils"/>
+      </Item>
+      <Item>
+        <Filename Value="etrescontrols.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="ETResControls"/>
+      </Item>
+    </Files>
+    <RequiredPkgs>
+      <Item>
+        <PackageName Value="virtualtreeview_package"/>
+      </Item>
+      <Item>
+        <PackageName Value="FCL"/>
+      </Item>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <OpenInFileMan Value="True"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

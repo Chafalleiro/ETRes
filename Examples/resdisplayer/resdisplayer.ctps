@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="12"/>
+    <BuildModes Active="Release"/>
+    <Units>
+      <Unit>
+        <Filename Value="resdisplayer.ppr"/>
+        <FRMtype Value="0"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <CursorPos X="20" Y="13"/>
+        <UsageCount Value="104"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="umainform.pas"/>
+        <FRMtype Value="200"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MainForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uMainForm"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="34"/>
+        <CursorPos X="10" Y="44"/>
+        <FoldState Value=" T3m60P212 pnVp9041[B4lRmL0Z3 pjQkS0C[K6aoV0U414]BQoY0+4]V3ka0+5 PjGkH0&apos;"/>
+        <UsageCount Value="104"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\..\uResOperations.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="3"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1084"/>
+        <CursorPos X="5" Y="1083"/>
+        <FoldState Value=" T3td0pB pifo50Pu"/>
+        <UsageCount Value="34"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="umainform.frm"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="390"/>
+        <CursorPos X="4" Y="411"/>
+        <UsageCount Value="42"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\..\uResFileIO.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="6"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="650"/>
+        <CursorPos X="5" Y="649"/>
+        <FoldState Value=" T3Y693 pibjQ6{S2 PpalG6N"/>
+        <UsageCount Value="32"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\..\uaddres.pas"/>
+        <FRMtype Value="0"/>
+        <ComponentName Value="frmAddResource"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uAddRes"/>
+        <EditorIndex Value="4"/>
+        <WindowIndex Value="0"/>
+        <CursorPos Y="23"/>
+        <UsageCount Value="12"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\..\uResDefs.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="5"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="506"/>
+        <CursorPos X="27" Y="501"/>
+        <FoldState Value=" TCi4Q6d"/>
+        <UsageCount Value="12"/>
+        <Loaded Value="True"/>
+      </Unit>
+    </Units>
+    <JumpHistory HistoryIndex="29">
+      <Position>
+        <Filename Value="umainform.pas"/>
+        <Caret Line="210" Column="30" TopLine="190"/>
+      </Position>
+      <Position>
+        <Filename Value="umainform.pas"/>
+        <Caret Line="467" Column="24" TopLine="247"/>
+      </Position>
+      <Position>
+        <Filename Value="umainform.pas"/>
+        <Caret Line="902" Column="13" TopLine="623"/>
+      </Position>
+      <Position>
+        <Filename Value="umainform.pas"/>
+        <Caret Line="905" Column="41" TopLine="895"/>
+      </Position>
+      <Position>
+        <Filename Value="umainform.pas"/>
+        <Caret Line="907" Column="47" TopLine="895"/>
+      </Position>
+      <Position>
+        <Filename Value="umainform.pas"/>
+        <Caret Line="1624" Column="43" TopLine="1604"/>
+      </Position>
+      <Position>
+        <Filename Value="umainform.pas"/>
+        <Caret Line="1707" Column="134" TopLine="1698"/>
+      </Position>
+      <Position>
+        <Filename Value="umainform.pas"/>
+        <Caret Line="905" Column="41" TopLine="895"/>
+      </Position>
+      <Position>
+        <Filename Value="umainform.pas"/>
+        <Caret Line="907" Column="47" TopLine="895"/>
+      </Position>
+      <Position>
+        <Filename Value="umainform.pas"/>
+        <Caret Line="1624" Column="43" TopLine="1614"/>
+      </Position>
+      <Position>
+        <Filename Value="umainform.pas"/>
+        <Caret Line="1861" Column="58" TopLine="1722"/>
+      </Position>
+      <Position>
+        <Filename Value="umainform.frm"/>
+        <Caret Line="17" Column="21"/>
+      </Position>
+      <Position>
+        <Filename Value="..\..\uResFileIO.pas"/>
+        <Caret Line="511" Column="44" TopLine="504"/>
+      </Position>
+      <Position>
+        <Filename Value="..\..\uResFileIO.pas"/>
+        <Caret Line="473" TopLine="473"/>
+      </Position>
+      <Position>
+        <Filename Value="..\..\uResFileIO.pas"/>
+        <Caret Line="479" Column="60" TopLine="469"/>
+      </Position>
+      <Position>
+        <Filename Value="..\..\uResFileIO.pas"/>
+        <Caret Line="362" Column="26" TopLine="353"/>
+      </Position>
+      <Position>
+        <Filename Value="..\..\uResFileIO.pas"/>
+        <Caret Line="598" Column="15" TopLine="578"/>
+      </Position>
+      <Position>
+        <Filename Value="..\..\uResFileIO.pas"/>
+        <Caret Line="630" TopLine="630"/>
+      </Position>
+      <Position>
+        <Filename Value="..\..\uResFileIO.pas"/>
+        <Caret Line="535" Column="24" TopLine="519"/>
+      </Position>
+      <Position>
+        <Filename Value="..\..\uResFileIO.pas"/>
+        <Caret Line="349" TopLine="347"/>
+      </Position>
+      <Position>
+        <Filename Value="..\..\uaddres.pas"/>
+        <Caret Line="125" Column="36" TopLine="113"/>
+      </Position>
+      <Position>
+        <Filename Value="..\..\uaddres.pas"/>
+        <Caret Line="149" TopLine="130"/>
+      </Position>
+      <Position>
+        <Filename Value="..\..\uaddres.pas"/>
+        <Caret Line="146" Column="63" TopLine="135"/>
+      </Position>
+      <Position>
+        <Filename Value="..\..\uaddres.pas"/>
+        <Caret Line="53" TopLine="53"/>
+      </Position>
+      <Position>
+        <Filename Value="..\..\uaddres.pas"/>
+        <Caret Line="57" Column="53" TopLine="50"/>
+      </Position>
+      <Position>
+        <Filename Value="..\..\uResOperations.pas"/>
+        <Caret Line="891" Column="21" TopLine="861"/>
+      </Position>
+      <Position>
+        <Filename Value="..\..\uaddres.pas"/>
+        <Caret Line="158" Column="5" TopLine="60"/>
+      </Position>
+      <Position>
+        <Filename Value="..\..\uResDefs.pas"/>
+        <Caret Line="24" Column="33" TopLine="19"/>
+      </Position>
+      <Position>
+        <Filename Value="..\..\uResFileIO.pas"/>
+        <Caret Line="648" TopLine="99"/>
+      </Position>
+      <Position>
+        <Filename Value="..\..\uResDefs.pas"/>
+        <Caret Line="24" Column="33" TopLine="17"/>
+      </Position>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+</CONFIG>

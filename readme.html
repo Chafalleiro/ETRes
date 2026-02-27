@@ -1,0 +1,182 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title></title></head><body>
+<h1 id="etrespackage-windows-resource-file-res-management">ETResPackage - Windows Resource File (.res) Management</h1>
+<p>This package provides a set of units and visual components for reading, editing, importing, and exporting Windows resource files (.res). It includes a functional API (<code>uResOperations</code>) that can be used directly in console or GUI applications, as well as two visual components for Lazarus/Typhon: <code>TETResExplorer</code> (viewer) and <code>TETResEdit</code> (editor).</p>
+<h2 id="package-contents">Package Contents</h2>
+<h3 id="source-files">Source Files</h3>
+<ul>
+<li><code>uResDefs.pas</code> – Basic definitions (types, records, constants).</li>
+<li><code>uResFile.pas</code> – Low-level functions for reading/parsing .res files.</li>
+<li><code>uResManager.pas</code> – In-memory resource manager.</li>
+<li><code>uResUtils.pas</code> – Reconstruction utilities (icons, bitmaps, text).</li>
+<li><code>uMimeDetect.pas</code> – MIME type detection from streams.</li>
+<li><code>uResFileIO.pas</code> – Export/import of individual resources.</li>
+<li><code>uResOperations.pas</code> – <strong>Unified API</strong> for all operations. This is the main entry point to use the functionality without a GUI.</li>
+<li><code>uAddRes.pas</code> / <code>.frm</code> – Resource import dialog (used by components).</li>
+<li><code>ETResControls.pas</code> – Visual components <code>TETResExplorer</code> and <code>TETResEdit</code>.</li>
+<li><code>ETResDsgn.pas</code> – Design-time property editors (optional).</li>
+</ul>
+<h2 id="api-functions-uresoperations-">API Functions (<code>uResOperations</code>)</h2>
+<p>The <code>uResOperations</code> unit exposes all operations on .res files in a simple and documented way. Below is a summary of the most important functions. For more details, see the comments in the source code.</p>
+<h3 id="initialization-and-files">Initialization and Files</h3>
+<ul>
+<li><code>ResOp_Initialize: Boolean</code> – Initializes the system (must be called once at startup).</li>
+<li><code>ResOp_Shutdown: Boolean</code> – Releases resources and closes files.</li>
+<li><code>ResOp_OpenFile(const FileName: string): Boolean</code> – Opens a .res file and loads its resources.</li>
+<li><code>ResOp_CloseFile: Boolean</code> – Closes the current file without saving.</li>
+<li><code>ResOp_SaveFile(const FileName: string = &#39;&#39;): Boolean</code> – Saves changes to the specified file (if omitted, saves to the currently open file).</li>
+<li><code>ResOp_GetFileName: string</code> – Returns the name of the current file.</li>
+</ul>
+<h3 id="queries">Queries</h3>
+<ul>
+<li><code>ResOp_GetResourceCount: Integer</code> – Number of resources.</li>
+<li><code>ResOp_GetAllResources: TResListArray</code> – List of all resources.</li>
+<li><code>ResOp_GetTextResources: TResListArray</code> – Only text resources.</li>
+<li><code>ResOp_GetImageResources: TResListArray</code> – Only image resources.</li>
+<li><code>ResOp_FindResource(const Name: string; const ResType: TResType): Integer</code> – Finds a resource by name and type.</li>
+<li><code>ResOp_GetResourceInfo(Index: Integer; out Info: TResInfo): Boolean</code> – Detailed information about a resource.</li>
+</ul>
+<h3 id="editing-operations">Editing Operations</h3>
+<ul>
+<li><code>ResOp_LoadResource(const Params: array of const): TMultiResLoadResult</code> – Loads resources with full control (same as <code>ResMgr_LoadResource</code>).</li>
+<li><code>ResOp_RenameResource(Index: Integer; const NewName: string; AutoSave: Boolean = False): Boolean</code> – Changes the resource name.</li>
+<li><code>ResOp_ChangeResourceType(Index: Integer; const NewType: TResType; AutoSave: Boolean = False): Boolean</code> – Changes the resource type.</li>
+<li><code>ResOp_DeleteResource(Index: Integer; AutoSave: Boolean = False): Boolean</code> – Deletes a resource.</li>
+<li><code>ResOp_AddResource(const Name: string; const ResType: TResType; Data: TMemoryStream; LanguageID: Word = 0; AutoSave: Boolean = False): Integer</code> – Adds a new resource from a stream.</li>
+<li><code>ResOp_ImportResource(const FileName: string; const ResourceName: string; const ResType: TResType; LanguageID: Word = 0; AutoSave: Boolean = False): Boolean</code> – Imports a resource from an external file.</li>
+<li><code>ResOp_ExportResource(const ResourceName, ResTypeName: string; Param: Integer): Boolean</code> – Exports a resource to a file (the <code>Param</code> parameter controls dialogs: 0=all, 2=no filename, 4=silent).</li>
+</ul>
+<h3 id="utilities">Utilities</h3>
+<ul>
+<li><code>ResOp_GetLastError: string</code> – Last error message.</li>
+<li><code>ResOp_TypeFromInt(Value: Integer): TResType</code> – Creates a <code>TResType</code> from an integer.</li>
+<li><code>ResOp_TypeFromString(const Value: string): TResType</code> – Creates a <code>TResType</code> from a string.</li>
+<li><code>ResOp_TypeToString(const ResType: TResType): string</code> – String representation of the type.</li>
+<li><code>ResOp_ValidateResourceName(const Name: string; const ResType: TResType): Boolean</code> – Checks if the name is valid for the given type.</li>
+<li><code>ResOp_FindFreeOrdinalName(const BaseName: string; ResTypeInt: Integer): string</code> – Finds an unused ordinal name.</li>
+</ul>
+<h2 id="visual-components">Visual Components</h2>
+<h3 id="tetresexplorer">TETResExplorer</h3>
+<p>Resource explorer with tree view and quick export options.</p>
+<p><strong>Main Properties:</strong></p>
+<ul>
+<li><code>FileName: string</code> – .res file to display (with design-time editor).</li>
+</ul>
+<p><strong>Methods:</strong></p>
+<ul>
+<li><code>procedure LoadFromFile(const AFileName: string)</code> – Loads a file.</li>
+<li><code>procedure Refresh</code> – Reloads the list from the currently open file.</li>
+<li><code>function GetSelectedResource: Integer</code> – Returns the index of the selected resource, or -1.</li>
+</ul>
+<p><strong>Events (can be added if needed):</strong></p>
+<ul>
+<li><code>OnResourceSelected</code> – Triggered when a resource is selected.</li>
+<li><code>OnExport</code> – Before/during export.</li>
+</ul>
+<h3 id="tetresedit">TETResEdit</h3>
+<p>Inherits from <code>TETResExplorer</code> and adds editing capabilities: rename, change type, import, delete, add.</p>
+<p><strong>Additional Methods:</strong></p>
+<ul>
+<li><code>procedure SaveToFile(const FileName: string)</code> – Saves changes to the file.</li>
+<li><code>procedure OpenFileDialog</code> – Opens a dialog to select a file.</li>
+</ul>
+<p><strong>Note:</strong> At design time, when you assign the <code>FileName</code> property, the component will attempt to load the file automatically. If the file does not exist, it remains empty.</p>
+<h2 id="usage-examples">Usage Examples</h2>
+<h3 id="without-gui-only-api">Without GUI, Only API</h3>
+<pre><code class="lang-pascal"><span class="hljs-keyword">program</span> TestRes;
+
+<span class="hljs-keyword">uses</span>
+  uResOperations;
+
+<span class="hljs-keyword">var</span>
+  ResList: TResListArray;
+  I: Integer;
+<span class="hljs-keyword">begin</span>
+  <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> ResOp_Initialize <span class="hljs-keyword">then</span>
+  <span class="hljs-keyword">begin</span>
+    WriteLn(<span class="hljs-string">'Error initializing'</span>);
+    <span class="hljs-keyword">Exit</span>;
+  <span class="hljs-keyword">end</span>;
+
+  <span class="hljs-keyword">if</span> ResOp_OpenFile(<span class="hljs-string">'myfile.res'</span>) <span class="hljs-keyword">then</span>
+  <span class="hljs-keyword">begin</span>
+    ResList := ResOp_GetAllResources;
+    <span class="hljs-keyword">for</span> I := <span class="hljs-number">0</span> <span class="hljs-keyword">to</span> High(ResList) <span class="hljs-keyword">do</span>
+      WriteLn(ResList[I].<span class="hljs-keyword">Name</span>, <span class="hljs-string">' ('</span>, ResList[I].DisplayType, <span class="hljs-string">') '</span>, ResList[I].Size, <span class="hljs-string">' bytes'</span>);
+    ResOp_CloseFile;
+  <span class="hljs-keyword">end</span>
+  <span class="hljs-keyword">else</span>
+    WriteLn(<span class="hljs-string">'Error: '</span>, ResOp_GetLastError);
+
+  ResOp_Shutdown;
+<span class="hljs-keyword">end</span>.
+</code></pre>
+<h3 id="with-visual-component">With Visual Component</h3>
+<ol>
+<li><p>Drop a TETResExplorer onto a form.</p>
+</li>
+<li><p>In the Object Inspector, click the &quot;...&quot; button next to the FileName property and select a .res file.</p>
+</li>
+<li><p>The tree will automatically populate with the resources.</p>
+</li>
+<li><p>To export, right-click on a resource and choose &quot;Export Quick&quot; or &quot;Export As...&quot;.</p>
+</li>
+</ol>
+<h3 id="requirements">Requirements</h3>
+<ul>
+<li><p>Free Pascal 3.0+ / Lazarus 2.0+ or Typhon.</p>
+</li>
+<li><p>virtualtreeview_package (VirtualTrees) installed in the IDE.</p>
+</li>
+</ul>
+<h3 id="installation">Installation</h3>
+<ol>
+<li><p>Open ETResPackage.lpk in Typhon/Lazarus.</p>
+</li>
+<li><p>Compile the package.</p>
+</li>
+<li><p>Install the package (rebuild the IDE if needed).</p>
+</li>
+<li><p>The components will appear on the &quot;ET Controls&quot; palette.</p>
+</li>
+</ol>
+<h3 id="additional-notes">Additional Notes</h3>
+<ul>
+<li><p>.res files can contain up to 65535 resources. The package handles any reasonable amount.</p>
+</li>
+<li><p>Icon and cursor resources (including groups) are handled correctly.</p>
+</li>
+<li><p>MIME detection is based on stream content, so it is reliable even without file extensions.</p>
+</li>
+</ul>
+<h3 id="more-about-res-files">More about .res files</h3>
+<p>Their flexibility and fast access make them very convenient for including files and data without the need for databases, compressors, archivers, or the operating system&#39;s file system.</p>
+<p>They are neither compressed nor encrypted, but since they are essentially a file container, we can include encrypted and compressed files if we need a resource not to be readable outside our application or control.</p>
+<p>Currently, .res files have evolved from the early 16-bit Windows versions to accommodate more options, but they still have basically the same structure: A sequential file with fixed-size records and variable-length fields.</p>
+<ul>
+<li><p>The record size is always 32-bit (DWORD).</p>
+</li>
+<li><p>Fields are divided into fixed-length fields for specific data such as language, size, offset, or version, and variable-length fields for fields like name, resource type, or the resource itself. They are organized into a header and content; the header has a specific field order, and at the end of it, the resource begins.</p>
+</li>
+<li><p>When a field is variable, its records are read sequentially until an end marker (null byte or zero) is found, or until we read the marker of a new field in the next record.</p>
+</li>
+<li><p>When writing data, we write record by record, padding the field tail with zeros once its data has ended.</p>
+</li>
+<li><p>There are special resources that originated from the intention to save space in older systems, when storage space was much more limited than today (floppy disks, CDs, hard drives below 1 GB...), and they are formatted by removing headers to share them among the records stored under that type. RT<em>BITMAP and GROUP</em>* belong to this category. Others, to maintain encoding compatibility, change the first bytes of the resource, such as TXT. There are also resources that can be executed from Windows to store forms; this program does not handle that information.</p>
+</li>
+<li><p>The MANIFEST type can be used to store relevant version information of the file. Executables from Lazarus and Typhon, and if specified in other IDEs like Codeblocks, can store this information in an XML and in the version field, which Windows will read.</p>
+</li>
+</ul>
+<h3 id="very-interesting-documentation-on-the-format-can-be-found-here-">Very interesting documentation on the format can be found here:</h3>
+<p>  <a href="https://www.moon-soft.com/program/FORMAT/windows/res32.htm">Moon Soft - win32 resource file format</a></p>
+<ul>
+<li><p>Two very comprehensive programs for managing resources and all their features can be found here:</p>
+<p><a href="https://www.angusj.com/resourcehacker/">Resource Hacker</a></p>
+<p><a href="https://katahiromz.web.fc2.com/re/en/">RisohEditor</a></p>
+</li>
+<li><p>Wikipedia entry with updated links to Microsoft&#39;s sparse information here:
+<a href="https://en.wikipedia.org/wiki/Resource_(Windows">Windows resource file</a>)</p>
+</li>
+</ul>
+<h2 id="license">License</h2>
+<p>You are free to use this code in your projects, whether commercial or not. If you make improvements, consider sharing them. </p>
+</body></html>

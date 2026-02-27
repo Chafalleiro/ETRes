@@ -1,0 +1,365 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title></title></head><body>
+<img alt="Static Badge" src="https://img.shields.io/badge/:badgeContent?logo=polygon">
+<img alt="Static Badge" src="https://img.shields.io/badge/:badgeContent?style=for-the-badge&logo=polygon">
+<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Polygon</title><path d="m17.82 16.342 5.692-3.287A.98.98 0 0 0 24 12.21V5.635a.98.98 0 0 0-.488-.846l-5.693-3.286a.98.98 0 0 0-.977 0L11.15 4.789a.98.98 0 0 0-.489.846v11.747L6.67 19.686l-3.992-2.304v-4.61l3.992-2.304 2.633 1.52V8.896L7.158 7.658a.98.98 0 0 0-.977 0L.488 10.945a.98.98 0 0 0-.488.846v6.573a.98.98 0 0 0 .488.847l5.693 3.286a.981.981 0 0 0 .977 0l5.692-3.286a.98.98 0 0 0 .489-.846V6.618l.072-.041 3.92-2.263 3.99 2.305v4.609l-3.99 2.304-2.63-1.517v3.092l2.14 1.236a.981.981 0 0 0 .978 0v-.001Z"/></svg>
+<p>===============================================================================</p>
+<h1 id="-resource-operations-unified-api-for-windows-res-file-management">  Resource Operations - Unified API for Windows .RES file management</h1>
+<p>  This unit provides a clean, consistent interface for all resource operations.
+  It acts as a facade over the lower-level units (uResManager, uResFileIO, etc.)
+  and should be the ONLY unit you need to use in your applications.</p>
+<hr>
+<h2 id="-data-structures-storage">  DATA STRUCTURES &amp; STORAGE</h2>
+<h1 id="-tresinfo-information-about-a-resource-read-only-for-queries-">  TResInfo - Information about a resource (read-only, for queries)</h1>
+<pre><code>Name: <span class="hljs-keyword">string</span>          - Resource name (e.g., <span class="hljs-string">'MAINICON'</span>, <span class="hljs-string">'1'</span>, <span class="hljs-string">'README'</span>)
+ResType: TResType     - Resource type (can be <span class="hljs-keyword">integer</span> <span class="hljs-keyword">or</span> <span class="hljs-keyword">string</span>)
+Size: Int64           - Size <span class="hljs-keyword">of</span> resource data <span class="hljs-keyword">in</span> <span class="hljs-keyword">bytes</span>
+LanguageID: Integer   - Language identifier (<span class="hljs-number">0</span> = neutral)
+DataOffset: Int64     - Offset <span class="hljs-keyword">in</span> <span class="hljs-keyword">the</span> original <span class="hljs-built_in">file</span> (<span class="hljs-built_in">do</span> <span class="hljs-keyword">not</span> modify)
+DataSize: Int64       - Same <span class="hljs-keyword">as</span> Size (<span class="hljs-keyword">for</span> compatibility)
+DataVersion: DWord    - Version info <span class="hljs-built_in">from</span> header
+MemoryFlags: Word     - Memory flags <span class="hljs-built_in">from</span> header
+VersionInfo: DWord    - Version field <span class="hljs-built_in">from</span> header
+Characteristics: DWord - Characteristics <span class="hljs-built_in">from</span> header
+</code></pre><h1 id="-trestype-resource-type-representation">  TResType - Resource type representation</h1>
+<pre><code>IsInteger: <span class="hljs-built_in">Boolean</span>    - <span class="hljs-literal">True</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">type</span> <span class="hljs-keyword">is</span> an <span class="hljs-built_in">integer</span> ID
+IntValue: <span class="hljs-built_in">Integer</span>     - Value <span class="hljs-keyword">when</span> IsInteger = <span class="hljs-literal">True</span>
+StrValue: <span class="hljs-built_in">string</span>      - Value <span class="hljs-keyword">when</span> IsInteger = <span class="hljs-literal">False</span>
+</code></pre><h1 id="-standard-integer-resource-types-use-constants-rt_xxx-">  Standard integer resource types (use constants RT_xxx):</h1>
+<pre><code><span class="hljs-symbol">1 </span> = CURSOR           <span class="hljs-number">2</span>  = BITMAP          <span class="hljs-number">3</span>  = ICON
+<span class="hljs-symbol">4 </span> = MENU             <span class="hljs-number">5</span>  = DIALOG          <span class="hljs-number">6</span>  = STRING
+<span class="hljs-symbol">7 </span> = FONTDIR          <span class="hljs-number">8</span>  = FONT            <span class="hljs-number">9</span>  = ACCELERATOR
+<span class="hljs-symbol">10 </span>= RCDATA           <span class="hljs-number">11</span> = MESSAGETABLE    <span class="hljs-number">12</span> = GROUP_CURSOR
+<span class="hljs-symbol">14 </span>= GROUP_ICON       <span class="hljs-number">16</span> = VERSION         <span class="hljs-number">17</span> = DLGINCLUDE
+<span class="hljs-symbol">19 </span>= PLUGPLAY         <span class="hljs-number">20</span> = VXD             <span class="hljs-number">21</span> = ANICURSOR
+<span class="hljs-symbol">22 </span>= ANIICON          <span class="hljs-number">23</span> = HTML            <span class="hljs-number">24</span> = MANIFEST
+</code></pre><hr>
+<h2 id="-streams-what-you-get-from-loadresource">  STREAMS - What you get from LoadResource</h2>
+<p>  ResOp_LoadResource returns an array of TMemoryStream. The format of each stream
+  depends on the resource type and the Mode parameter:</p>
+<p>  Mode = mrmRejoined (for groups):</p>
+<pre><code>-<span class="ruby"> Icon groups (RT_GROUP_ICON): Complete .ico file (ICONDIR + images)
+</span>-<span class="ruby"> Cursor groups (RT_GROUP_CURSOR): Complete .cur file
+</span>-<span class="ruby"> Single <span class="hljs-symbol">resource:</span> The raw resource data <span class="hljs-keyword">in</span> its original format</span>
+</code></pre><p>  Mode = mrmImage, mrmAll, etc. (for individual images from groups):</p>
+<pre><code>- Each stream <span class="hljs-keyword">is</span> <span class="hljs-keyword">a</span> <span class="hljs-built_in">complete</span>, displayable image <span class="hljs-keyword">file</span>:
+  * ICO <span class="hljs-keyword">file</span><span class="hljs-variable">s:</span> Valid .ico <span class="hljs-keyword">file</span> with its own header
+  * PNG <span class="hljs-keyword">file</span><span class="hljs-variable">s:</span> Valid .png <span class="hljs-keyword">file</span>
+  * JPEG <span class="hljs-keyword">file</span><span class="hljs-variable">s:</span> Valid .jpg <span class="hljs-keyword">file</span>
+  * GIF <span class="hljs-keyword">file</span><span class="hljs-variable">s:</span> Valid .gif <span class="hljs-keyword">file</span>
+  * BMP <span class="hljs-keyword">file</span><span class="hljs-variable">s:</span> Valid .bmp <span class="hljs-keyword">file</span> (with BITMAPFILEHEADER)
+</code></pre><p>  Mode = mrmText, mrmAll (for text resources):</p>
+<pre><code>- Text resources (RT_HTML, RT_MANIFEST, RT_RCDATA <span class="hljs-keyword">with</span> <span class="hljs-keyword">text</span>):
+  * UTF<span class="hljs-number">-8</span> encoded <span class="hljs-keyword">text</span> (may <span class="hljs-built_in">include</span> BOM)
+  * Usually <span class="hljs-literal">null</span>-terminated
+  * Can be loaded directly <span class="hljs-keyword">into</span> TMemo <span class="hljs-keyword">or</span> similar
+</code></pre><p>  Mode = mrmAll (for other resources):</p>
+<pre><code>- Raw binary data exactly <span class="hljs-keyword">as</span> <span class="hljs-keyword">stored</span> <span class="hljs-keyword">in</span> the .res <span class="hljs-keyword">file</span>
+- Format depends <span class="hljs-keyword">on</span> the specific resource <span class="hljs-keyword">type</span>
+</code></pre><p>  IMPORTANT: You are responsible for freeing the streams after use!</p>
+<p>  Example:</p>
+<pre><code>Streams := <span class="hljs-keyword">nil</span>;
+<span class="hljs-keyword">if</span> ResOp_LoadResource(<span class="hljs-string">'MAINICON'</span>, ResOp_TypeFromInt(RT_GROUP_ICON),
+                      mrmImage, Streams) <span class="hljs-keyword">then</span>
+<span class="hljs-keyword">try</span>
+  <span class="hljs-keyword">for</span> I := <span class="hljs-number">0</span> <span class="hljs-keyword">to</span> High(Streams) <span class="hljs-keyword">do</span>
+    <span class="hljs-keyword">if</span> Streams[I] &lt;&gt; <span class="hljs-keyword">nil</span> <span class="hljs-keyword">then</span>
+      Image1.Picture.LoadFromStream(Streams[I]);
+<span class="hljs-keyword">finally</span>
+  <span class="hljs-keyword">for</span> I := <span class="hljs-number">0</span> <span class="hljs-keyword">to</span> High(Streams) <span class="hljs-keyword">do</span>
+    Streams[I].Free;
+<span class="hljs-keyword">end</span>;
+</code></pre><hr>
+<h2 id="-text-resources-special-handling">  TEXT RESOURCES - Special handling</h2>
+<p>  Text resources (HTML, MANIFEST, XML, etc.) are stored as UTF-8 with an
+  optional BOM (EF BB BF). When you load them:</p>
+<ul>
+<li>The stream contains the raw bytes including BOM if present</li>
+<li><p>To display in a TMemo, you can either:</p>
+<ul>
+<li>Use TEncoding.UTF8.GetString(Stream.Memory, Stream.Size)</li>
+<li>Or load directly if the memo supports UTF-8</li>
+</ul>
+<p>Example for text resources:</p>
+<p>if ResOp_LoadResource(&#39;README&#39;, ResOp_TypeFromInt(RT_HTML),</p>
+<pre><code>                  mrmAll, Streams) <span class="hljs-keyword">then</span>
+</code></pre><p>begin
+  SetString(Text, PAnsiChar(Streams[0].Memory), Streams[0].Size);
+  Memo1.Text := Text;
+end;</p>
+</li>
+</ul>
+<hr>
+<h2 id="-image-resources-display">  IMAGE RESOURCES - Display</h2>
+<p>  Images returned by LoadResource are always in a format that TImage can load
+  directly. For icon groups loaded with mrmImage, you get multiple streams,
+  one for each image size/depth in the group.</p>
+<p>  Example for images:</p>
+<pre><code><span class="hljs-keyword">if</span> ResOp_LoadResource(<span class="hljs-string">'MAINICON'</span>, ResOp_TypeFromInt(RT_GROUP_ICON),
+                      mrmImage, Streams) <span class="hljs-keyword">then</span>
+<span class="hljs-keyword">begin</span>
+  <span class="hljs-comment">// Streams[0] is the first image (usually 16x16)</span>
+  <span class="hljs-comment">// Streams[1] is the second image (usually 32x32), etc.</span>
+  Image1.Picture.LoadFromStream(Streams[<span class="hljs-number">0</span>]);
+<span class="hljs-keyword">end</span>;
+</code></pre><hr>
+<h2 id="-quick-start-basic-usage-">  QUICK START - Basic Usage:</h2>
+<ol>
+<li><p>Initialize the system</p>
+<p>if not ResOp_Initialize then
+ShowMessage(&#39;Failed to initialize&#39;);</p>
+</li>
+<li><p>Open a resource file</p>
+<p>if ResOp_OpenFile(&#39;myfile.res&#39;) then
+begin</p>
+</li>
+<li><p>Get list of resources</p>
+<p>Resources := ResOp_GetAllResources;</p>
+</li>
+<li><p>Load a specific resource</p>
+<p>Streams := nil;</p>
+<p>if ResOp_LoadResource(&#39;BITMAP1&#39;, ResOp_TypeFromInt(2), mrmAll, Streams) then// Use the stream(s)</p>
+</li>
+<li><p>Save changes</p>
+<p>ResOp_SaveFile;   //Saves to the original file
+// or</p>
+<p>ResOp_SaveFile(&#39;newfile.res&#39;);  // Saves to a new file
+end;</p>
+</li>
+<li><p>Shutdown when done</p>
+<p>ResOp_Shutdown;</p>
+<hr>
+<h2 id="error-handling-">ERROR HANDLING:</h2>
+<p>All functions return Boolean for success/failure. On failure, call
+ResOp_GetLastError to get the error message.</p>
+<p>Example:</p>
+<p>if not ResOp_OpenFile(&#39;test.res&#39;) then
+  ShowMessage(&#39;Error: &#39; + ResOp_GetLastError);</p>
+<hr>
+<h2 id="export-parameters-">EXPORT PARAMETERS:</h2>
+<p>The ExportResource functions accept a Param parameter that controls dialogs:</p>
+<p>EXPORT_DIALOG_ALL   = 0  - Show all dialogs (ask for filename, confirm overwrite)
+EXPORT_NO_OVERWRITE = 1  - Don&#39;t ask for overwrite confirmation
+EXPORT_NO_NAME      = 2  - Don&#39;t ask for filename (use default name in exports/)
+EXPORT_NO_MULTI     = 3  - Don&#39;t ask for multiple choices (auto-select all)
+EXPORT_SILENT       = 4  - No dialogs at all, auto-save with defaults</p>
+<hr>
+<h2 id="main-functions-summary-">MAIN FUNCTIONS SUMMARY:</h2>
+<p>FILE MANAGEMENT</p>
+</li>
+</ol>
+<hr>
+<p>  ResOp_Initialize: Boolean</p>
+<pre><code>Initialize the resource system. Must be called before any other operations.
+Example: <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> ResOp_Initialize <span class="hljs-keyword">then</span> <span class="hljs-keyword">Exit</span>;
+</code></pre><p>  ResOp_Shutdown: Boolean</p>
+<pre><code>Clean shutdown <span class="hljs-keyword">of</span> the resource system. Frees <span class="hljs-keyword">all</span> internal structures.
+Example: ResOp_Shutdown;
+</code></pre><p>  ResOp_OpenFile(const FileName: string): Boolean</p>
+<pre><code><span class="hljs-keyword">Open</span> a .res <span class="hljs-keyword">file</span> <span class="hljs-keyword">and</span> parse <span class="hljs-keyword">all</span> resources.
+Example: <span class="hljs-keyword">if</span> ResOp_OpenFile(<span class="hljs-symbol">'resources</span>.res') <span class="hljs-keyword">then</span> ...
+</code></pre><p>  ResOp_CloseFile: Boolean</p>
+<pre><code><span class="hljs-keyword">Close</span> the currently <span class="hljs-keyword">open</span> <span class="hljs-keyword">file</span> without saving.
+Example: ResOp_CloseFile;
+</code></pre><p>  ResOp_SaveFile(const FileName: string = &#39;&#39;): Boolean</p>
+<pre><code>Save current resources <span class="hljs-keyword">to</span> <span class="hljs-keyword">file</span>. <span class="hljs-keyword">If</span> FileName <span class="hljs-keyword">is</span> empty, saves <span class="hljs-keyword">to</span> original.
+Example: ResOp_SaveFile;                     // Save <span class="hljs-keyword">to</span> original
+         ResOp_SaveFile(<span class="hljs-symbol">'backup</span>.res');       // Save as <span class="hljs-keyword">new</span> <span class="hljs-keyword">file</span>
+</code></pre><p>  ResOp_GetFileName: string</p>
+<pre><code>Get the <span class="hljs-keyword">name</span> <span class="hljs-keyword">of</span> the currently open <span class="hljs-keyword">file</span>.
+Example: ShowMessage(<span class="hljs-string">'Editing: '</span> + ResOp_GetFileName);
+</code></pre><h2 id="-resource-queries-">  --- RESOURCE QUERIES </h2>
+<p>  ResOp_GetResourceCount: Integer</p>
+<pre><code><span class="hljs-keyword">Return</span> the <span class="hljs-keyword">number</span> of resources <span class="hljs-keyword">in</span> the current <span class="hljs-keyword">file</span>.
+Example: <span class="hljs-built_in">Count</span> := ResOp_GetResourceCount;
+</code></pre><p>  ResOp_GetAllResources: TResListArray</p>
+<pre><code>Return<span class="hljs-built_in"> array </span>of all resources with basic information.
+Example: Resources<span class="hljs-keyword"> :</span>= ResOp_GetAllResources;
+</code></pre><p>  ResOp_GetTextResources: TResListArray</p>
+<pre><code>Return<span class="hljs-built_in"> array </span>of all text resources (HTML, MANIFEST, etc.).
+Example: TextRes<span class="hljs-keyword"> :</span>= ResOp_GetTextResources;
+</code></pre><p>  ResOp_GetImageResources: TResListArray</p>
+<pre><code>Return<span class="hljs-built_in"> array </span>of all image resources (icons, bitmaps, etc.).
+Example: ImageRes<span class="hljs-keyword"> :</span>= ResOp_GetImageResources;
+</code></pre><p>  ResOp_FindResource(const Name: string; const ResType: TResType): Integer</p>
+<pre><code>Find resource <span class="hljs-keyword">index</span> by <span class="hljs-keyword">name</span> <span class="hljs-keyword">and</span> <span class="hljs-keyword">type</span>. Returns -<span class="hljs-number">1</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> found.
+Example: Idx := ResOp_FindResource(<span class="hljs-string">'MAINICON'</span>, ResOp_TypeFromInt(<span class="hljs-number">14</span>));
+</code></pre><p>  ResOp_GetResourceInfo(Index: Integer; out Info: TResInfo): Boolean</p>
+<pre><code>Get detailed information <span class="hljs-keyword">about</span> a resource <span class="hljs-keyword">by</span> <span class="hljs-keyword">its</span> index.
+Example: <span class="hljs-keyword">if</span> ResOp_GetResourceInfo(<span class="hljs-number">5</span>, Info) <span class="hljs-keyword">then</span> ...
+</code></pre><h2 id="-resource-operations-">  --- RESOURCE OPERATIONS </h2>
+<p>  ResOp_LoadResource(const Params: array of const): TMultiResLoadResult</p>
+<pre><code><span class="hljs-keyword">Load</span> <span class="hljs-keyword">resource</span> <span class="hljs-keyword">data</span> <span class="hljs-keyword">with</span> <span class="hljs-keyword">full</span> control. See detailed documentation above.
+Example: <span class="hljs-keyword">Result</span> := ResOp_LoadResource([<span class="hljs-string">'MAINICON'</span>, <span class="hljs-string">'14'</span>, <span class="hljs-number">10</span>, <span class="hljs-string">''</span>, <span class="hljs-number">0</span>]);
+</code></pre><p>  ResOp_RenameResource(Index: Integer; const NewName: string;
+    AutoSave: Boolean = False): Boolean</p>
+<pre><code>Change a resource<span class="hljs-symbol">'s</span> name. <span class="hljs-keyword">If</span> AutoSave=<span class="hljs-literal">True</span>, saves immediately.
+Example: ResOp_RenameResource(<span class="hljs-number">3</span>, <span class="hljs-symbol">'NEWNAME</span>', <span class="hljs-literal">True</span>);
+</code></pre><p>  ResOp_ChangeResourceType(Index: Integer; const NewType: TResType;
+    AutoSave: Boolean = False): Boolean</p>
+<pre><code>Change a resource<span class="hljs-symbol">'s</span> <span class="hljs-keyword">type</span>. <span class="hljs-keyword">If</span> AutoSave=<span class="hljs-literal">True</span>, saves immediately.
+Example: ResOp_ChangeResourceType(<span class="hljs-number">3</span>, ResOp_TypeFromInt(<span class="hljs-number">23</span>), <span class="hljs-literal">True</span>);
+</code></pre><p>  ResOp_DeleteResource(Index: Integer; AutoSave: Boolean = False): Boolean</p>
+<pre><code><span class="hljs-keyword">Delete</span> a resource. <span class="hljs-keyword">If</span> AutoSave=<span class="hljs-literal">True</span>, saves immediately.
+Example: ResOp_DeleteResource(<span class="hljs-number">3</span>, <span class="hljs-literal">True</span>);
+</code></pre><p>  ResOp_AddResource(const Name: string; const ResType: TResType;
+    Data: TMemoryStream; LanguageID: Word = 0; AutoSave: Boolean = False): Integer</p>
+<pre><code><span class="hljs-keyword">Add</span> a <span class="hljs-keyword">new</span> resource <span class="hljs-keyword">from</span> a stream. Returns <span class="hljs-keyword">new</span> <span class="hljs-keyword">index</span> <span class="hljs-keyword">or</span> -<span class="hljs-number">1</span> <span class="hljs-keyword">on</span> error.
+Example: NewIdx := ResOp_AddResource(<span class="hljs-string">'NEW'</span>, ResOp_TypeFromInt(<span class="hljs-number">10</span>),
+           MyStream, <span class="hljs-number">0</span>, <span class="hljs-keyword">True</span>);
+</code></pre><p>  ResOp_ImportResource(const FileName: string; const ResourceName: string;
+    const ResType: TResType; LanguageID: Word = 0; AutoSave: Boolean = False): Boolean</p>
+<pre><code><span class="hljs-keyword">Import</span> a resource <span class="hljs-keyword">from</span> an external <span class="hljs-keyword">file</span>.
+Example: ResOp_ImportResource(<span class="hljs-string">'image.png'</span>, <span class="hljs-string">'LOGO'</span>,
+           ResOp_TypeFromInt(<span class="hljs-number">2</span>), <span class="hljs-number">0</span>, <span class="hljs-keyword">True</span>);
+</code></pre><p>  ResOp_ExportResource(const ResourceName, ResTypeName: string;
+    Param: Integer): Boolean</p>
+<pre><code>Export a resource <span class="hljs-keyword">to</span> an external <span class="hljs-keyword">file</span>. Param controls dialogs:
+  <span class="hljs-number">0</span> = Show <span class="hljs-keyword">all</span> dialogs
+  <span class="hljs-number">1</span> = Don<span class="hljs-symbol">'t</span> ask <span class="hljs-keyword">for</span> overwrite
+  <span class="hljs-number">2</span> = Don<span class="hljs-symbol">'t</span> ask <span class="hljs-keyword">for</span> filename (<span class="hljs-keyword">use</span> <span class="hljs-keyword">default</span>)
+  <span class="hljs-number">3</span> = Don<span class="hljs-symbol">'t</span> ask <span class="hljs-keyword">for</span> multiple choices
+  <span class="hljs-number">4</span> = No dialogs at <span class="hljs-keyword">all</span>
+Example: ResOp_ExportResource(<span class="hljs-symbol">'MAINICON</span>', '<span class="hljs-number">14</span>', <span class="hljs-number">2</span>);  // Quick export
+</code></pre><h2 id="-utilities">  --- UTILITIES</h2>
+<p>  ResOp_GetLastError: string</p>
+<pre><code><span class="hljs-attribute">Get</span> the <span class="hljs-literal">last</span> <span class="hljs-literal">error</span> message from any failed operation.
+Example: ShowMessage(<span class="hljs-string">'Error: '</span> + ResOp_GetLastError);
+</code></pre><p>  ResOp_TypeFromInt(Value: Integer): TResType</p>
+<pre><code>Create <span class="hljs-keyword">a</span> TResType <span class="hljs-built_in">from</span> <span class="hljs-keyword">an</span> <span class="hljs-keyword">integer</span> ID.
+Example: MyType := ResOp_TypeFromInt(<span class="hljs-number">14</span>); <span class="hljs-comment"> // GROUP_ICON</span>
+</code></pre><p>  ResOp_TypeFromString(const Value: string): TResType</p>
+<pre><code><span class="hljs-keyword">Create</span> a TResType <span class="hljs-keyword">from</span> a <span class="hljs-keyword">string</span> name.
+Example: MyType := ResOp_TypeFromString(<span class="hljs-string">'HTML'</span>);
+</code></pre><p>  ResOp_TypeToString(const ResType: TResType): string</p>
+<pre><code>Convert a TResType <span class="hljs-keyword">to</span> <span class="hljs-keyword">its</span> <span class="hljs-built_in">string</span> representation (ID <span class="hljs-keyword">or</span> <span class="hljs-built_in">name</span>).
+Example: ShowMessage(ResOp_TypeToString(MyType));
+</code></pre><p>  ResOp_ValidateResourceName(const Name: string; const ResType: TResType): Boolean</p>
+<pre><code><span class="hljs-keyword">Check</span> <span class="hljs-keyword">if</span> a <span class="hljs-keyword">resource</span> <span class="hljs-keyword">name</span> <span class="hljs-keyword">is</span> valid (<span class="hljs-keyword">no</span> duplicates, correct <span class="hljs-keyword">format</span>).
+Example: <span class="hljs-keyword">if</span> ResOp_ValidateResourceName(<span class="hljs-string">'NEW'</span>, MyType) <span class="hljs-keyword">then</span> ...
+</code></pre><p>  ResOp_FindFreeOrdinalName(const BaseName: string; ResTypeInt: Integer): string</p>
+<pre><code><span class="hljs-built_in">Find</span> an unused ordinal <span class="hljs-built_in">name</span> <span class="hljs-keyword">for</span> a given resource <span class="hljs-built_in">type</span>.
+Example: NewName := ResOp_FindFreeOrdinalName(<span class="hljs-string">'ICON'</span>, <span class="hljs-number">3</span>);
+</code></pre><h2 id="-debugging">  --- DEBUGGING</h2>
+<p>  ResOp_SetDebugLevel(Level: TDebugLevel)</p>
+<pre><code><span class="hljs-keyword">Set</span> debug <span class="hljs-keyword">output</span> <span class="hljs-keyword">level</span> (dlNone, dlError, dlWarning, dlInfo, dlDetail).
+Example: ResOp_SetDebugLevel(dlDetail);
+</code></pre><p>  ResOp_GetDebugLevel: TDebugLevel</p>
+<pre><code>Get current debug level.
+<span class="hljs-keyword">Example</span>: <span class="hljs-keyword">if</span> ResOp_GetDebugLevel = dlDetail <span class="hljs-keyword">then</span> ...
+</code></pre><h1 id="-">  =============================================================================</h1>
+<h1 id="-resource-operations"> RESOURCE OPERATIONS</h1>
+<p>===============================================================================</p>
+<h1 id="-resop_loadresource-load-resources-with-full-metadata">  ResOp_LoadResource - Load resources with full metadata</h1>
+<p>  This function is a direct wrapper for ResMgr_LoadResource. It accepts the same
+  parameters and returns the same TMultiResLoadResult structure.</p>
+<hr>
+<h2 id="-parameters-array-of-const-">  PARAMETERS (array of const)</h2>
+<p>  Format: [Name, ResType, Mode, FormatPref, Language, Indices...]</p>
+<p>  Name (string) - Required
+    Resource name to search for. Can be a textual name or a numeric ID as string
+    (e.g., &#39;1&#39;, &#39;MAINICON&#39;).</p>
+<p>  ResType (string) - Optional
+    Resource type. Can be:</p>
+<pre><code>-<span class="ruby"> Number as <span class="hljs-symbol">string:</span> <span class="hljs-string">'3'</span> (ICON), <span class="hljs-string">'14'</span> (GROUP_ICON), etc.
+</span>-<span class="ruby"> Textual <span class="hljs-symbol">name:</span> <span class="hljs-string">'ICON'</span>, <span class="hljs-string">'HTML'</span>, <span class="hljs-string">'MANIFEST'</span>, etc.
+</span>-<span class="ruby"> Empty <span class="hljs-string">''</span> <span class="hljs-keyword">for</span> any type</span>
+</code></pre><p>  Mode (integer) - Optional, default = 0 (mrmAll)
+    Selection mode when multiple resources match:</p>
+<pre><code><span class="hljs-symbol">0 </span>= mrmAll       - <span class="hljs-keyword">Return</span> all matching resources
+<span class="hljs-symbol">1 </span>= mrmBest      - Best match according <span class="hljs-keyword">to</span> preferred format
+<span class="hljs-symbol">2 </span>= mrmFirst     - <span class="hljs-keyword">Return</span> only the first resource
+<span class="hljs-symbol">3 </span>= mrmLast      - <span class="hljs-keyword">Return</span> only the last resource
+<span class="hljs-symbol">4 </span>= mrmLargest   - <span class="hljs-keyword">Return</span> the largest resource (by size)
+<span class="hljs-symbol">5 </span>= mrmSmallest  - <span class="hljs-keyword">Return</span> the smallest resource
+<span class="hljs-symbol">6 </span>= mrmSelection - <span class="hljs-keyword">Return</span> specific resources by index (requires indices)
+<span class="hljs-symbol">7 </span>= mrmByType    - Filter by specific type
+<span class="hljs-symbol">8 </span>= mrmByMime    - Filter by MIME type
+<span class="hljs-symbol">9 </span>= mrmText      - <span class="hljs-keyword">Return</span> only text resources
+<span class="hljs-symbol">10 </span>= mrmImage     - <span class="hljs-keyword">Return</span> only images
+<span class="hljs-symbol">11 </span>= mrmAudio     - <span class="hljs-keyword">Return</span> only audio
+<span class="hljs-symbol">12 </span>= mrmVideo     - <span class="hljs-keyword">Return</span> only video
+<span class="hljs-symbol">13 </span>= mrmArchive   - <span class="hljs-keyword">Return</span> only compressed archives
+<span class="hljs-symbol">14 </span>= mrmExecutable - <span class="hljs-keyword">Return</span> only executables
+<span class="hljs-symbol">15 </span>= mrmRejoined  - <span class="hljs-keyword">Return</span> complete group file (<span class="hljs-keyword">for</span> icons/cursors)
+</code></pre><p>  FormatPref (string) - Optional</p>
+<pre><code>Preferred format <span class="hljs-keyword">for</span> mrmBest/<span class="hljs-string">mrmByMime:</span>
+<span class="hljs-string">'TEXT'</span>, <span class="hljs-string">'IMAGE'</span>, <span class="hljs-string">'HTML'</span>, <span class="hljs-string">'PNG'</span>, <span class="hljs-string">'JPEG'</span>, <span class="hljs-string">'ICO'</span>, etc.
+</code></pre><p>  Language (integer) - Optional, default = 0</p>
+<pre><code>Language ID <span class="hljs-built_in">to</span> <span class="hljs-built_in">filter</span> (<span class="hljs-number">0</span> = <span class="hljs-keyword">any</span> language)
+</code></pre><p>  Indices... (integer) - Optional</p>
+<pre><code><span class="hljs-keyword">For</span> mrmSelection, <span class="hljs-built_in">list</span> of indices <span class="hljs-keyword">to</span> <span class="hljs-built_in">select</span>.
+Example: [..., <span class="hljs-number">0</span>, <span class="hljs-number">2</span>, <span class="hljs-number">5</span>] selects <span class="hljs-built_in">resources</span> at positions <span class="hljs-number">0</span>, <span class="hljs-number">2</span> <span class="hljs-built_in">and</span> <span class="hljs-number">5</span>
+</code></pre><hr>
+<h2 id="-return-structure-tmultiresloadresult">  RETURN STRUCTURE: TMultiResLoadResult</h2>
+<p>  The function returns a record with the following information:</p>
+<p>  Success: Boolean              - True if operation succeeded
+  Count: Integer                - Number of loaded resources
+  ErrorMessage: string          - Error message if Success = False</p>
+<p>  Items: array of TResLoadResult - Detailed information for each resource
+    Each TResLoadResult contains:</p>
+<pre><code>[DATA]
+  Data: TMemoryStream        - Stream <span class="hljs-keyword">with</span> resource data (MUST FREE!)
+  Size: Int64                - Size <span class="hljs-keyword">in</span> bytes
+
+[IDENTIFICATION]
+  ResourceName: <span class="hljs-keyword">string</span>       - Resource <span class="hljs-keyword">name</span>
+  ResourceIndex: Integer     - <span class="hljs-keyword">Index</span> <span class="hljs-keyword">in</span> original <span class="hljs-keyword">file</span>
+  ResourceType: TResType     - Original <span class="hljs-keyword">type</span> (integer <span class="hljs-keyword">or</span> <span class="hljs-keyword">string</span>)
+  ResourceTypeName: <span class="hljs-keyword">string</span>   - <span class="hljs-keyword">Type</span> <span class="hljs-keyword">name</span> (<span class="hljs-string">'ICON'</span>, <span class="hljs-string">'HTML'</span>, etc.)
+
+[CLASSIFICATION]
+  MimeType: TMimeType        - Detected MIME <span class="hljs-keyword">type</span>
+  MimeTypeName: <span class="hljs-keyword">string</span>       - MIME <span class="hljs-keyword">type</span> <span class="hljs-keyword">name</span> (<span class="hljs-string">'PNG'</span>, <span class="hljs-string">'JPEG'</span>, etc.)
+  ResourceCategory: TResourceCategory - Category (Text, Image, Binary...)
+  ResourceCategoryName: <span class="hljs-keyword">string</span> - Category <span class="hljs-keyword">name</span>
+
+[DISPLAY]
+  CanDisplay: Boolean        - Whether it can be displayed directly
+  DefaultView: <span class="hljs-keyword">string</span>        - Suggested view: <span class="hljs-string">'text'</span>, <span class="hljs-string">'image'</span>, <span class="hljs-string">'hex'</span>
+
+[METADATA]
+  LanguageID: Word           - Language ID
+  DataOffset: Int64          - Offset <span class="hljs-keyword">in</span> original <span class="hljs-keyword">file</span>
+</code></pre><p>  Combined: TMemoryStream - Combined stream (for groups with mrmRejoined)</p>
+<p>  ImageStreams: TMemoryStreamArray - Individual streams (for icons/cursors)</p>
+<p>  ImageMimeTypes: TMimeTypeArray    - MIME types for each image</p>
+<p>  ImageDimensions: TStringArray     - Dimensions &#39;16x16&#39;, &#39;32x32&#39;, etc.</p>
+<p>  ImageCategories: TResourceCategoryArray - Categories for each image</p>
+<hr>
+<h2 id="-usage-examples">  USAGE EXAMPLES</h2>
+<ol>
+<li><p>Load a specific resource by name and type</p>
+<p>Result := ResOp_LoadResource([&#39;MAINICON&#39;, &#39;14&#39;, 0, &#39;&#39;, 0]);</p>
+</li>
+<li><p>Load all images from a group</p>
+<p>Result := ResOp_LoadResource([&#39;MAINICON&#39;, &#39;14&#39;, 10, &#39;IMAGE&#39;, 0]);//mrmImage = 10
+for I := 0 to High(Result.ImageStreams) do
+Image1.Picture.LoadFromStream(Result.ImageStreams[I]);</p>
+</li>
+<li><p>Load the best text resource</p>
+<p>Result := ResOp_LoadResource([&#39;README&#39;, &#39;&#39;, 1, &#39;TEXT&#39;, 0]);  //mrmBest = 1</p>
+</li>
+<li><p>Load specific resources by index</p>
+<p>Result := ResOp_LoadResource([&#39;ICON&#39;, &#39;3&#39;, 6, &#39;&#39;, 0, 1, 3, 5]);//mrmSelection = 6</p>
+</li>
+<li><p>Load a complete group as an ICO file</p>
+<p>Result := ResOp_LoadResource([&#39;MAINICON&#39;, &#39;14&#39;, 15, &#39;&#39;, 0]); //mrmRejoined = 15
+Result.Combined.SaveToFile(&#39;icon.ico&#39;);</p>
+</li>
+</ol>
+<hr>
+<h2 id="-important-memory-management">  IMPORTANT: MEMORY MANAGEMENT</h2>
+<p>  Returned streams (Items[I].Data, Combined, ImageStreams) are NOT freed
+  automatically. You must free them when no longer needed:</p>
+<pre><code><span class="hljs-keyword">for</span> I := <span class="hljs-number">0</span> <span class="hljs-keyword">to</span> <span class="hljs-keyword">Result</span>.Count - <span class="hljs-number">1</span> <span class="hljs-keyword">do</span>
+<span class="hljs-keyword">if</span> <span class="hljs-keyword">Result</span>.Items[I].Data &lt;&gt; <span class="hljs-keyword">nil</span> <span class="hljs-keyword">then</span>
+  <span class="hljs-keyword">Result</span>.Items[I].Data.Free;
+
+<span class="hljs-keyword">if</span> <span class="hljs-keyword">Result</span>.Combined &lt;&gt; <span class="hljs-keyword">nil</span> <span class="hljs-keyword">then</span>
+<span class="hljs-keyword">Result</span>.Combined.Free;
+
+<span class="hljs-keyword">for</span> I := <span class="hljs-number">0</span> <span class="hljs-keyword">to</span> High(<span class="hljs-keyword">Result</span>.ImageStreams) <span class="hljs-keyword">do</span>
+<span class="hljs-keyword">if</span> <span class="hljs-keyword">Result</span>.ImageStreams[I] &lt;&gt; <span class="hljs-keyword">nil</span> <span class="hljs-keyword">then</span>
+  <span class="hljs-keyword">Result</span>.ImageStreams[I].Free;
+</body></html>
+</code></pre><p>  =============================================================================</p>
