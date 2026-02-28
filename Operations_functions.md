@@ -307,6 +307,20 @@
     Example: ResOp_ExportResource('MAINICON', '14', 2);  // Quick export
 
 
+  ResOp_ExportResToFile(const ResourceName, ResTypeName, DestFile: string): Boolean;
+
+   Exports a resource to an external file without any user interaction.
+   Returns True on success, False on failure. Use ResOp_GetLastError to retrieve the error message.
+  Note: For resources that consist of multiple images (e.g., icon groups), this function will export only the first image. For full control over groups, use ResOp_ExportResource.
+
+  Example:
+  
+    if ResOp_ExportResToFile('DOCUMENTATION_CSS', 'CSS', 'documentation.css') then
+      WriteLn('Exported successfully')
+    else
+      WriteLn('Error: ', ResOp_GetLastError);     
+      
+
   --- UTILITIES
    ----------------------------------------------------------------
 

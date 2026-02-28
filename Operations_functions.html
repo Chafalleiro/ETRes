@@ -1,7 +1,4 @@
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title></title></head><body>
-<img alt="Static Badge" src="https://img.shields.io/badge/:badgeContent?logo=polygon">
-<img alt="Static Badge" src="https://img.shields.io/badge/:badgeContent?style=for-the-badge&logo=polygon">
-<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Polygon</title><path d="m17.82 16.342 5.692-3.287A.98.98 0 0 0 24 12.21V5.635a.98.98 0 0 0-.488-.846l-5.693-3.286a.98.98 0 0 0-.977 0L11.15 4.789a.98.98 0 0 0-.489.846v11.747L6.67 19.686l-3.992-2.304v-4.61l3.992-2.304 2.633 1.52V8.896L7.158 7.658a.98.98 0 0 0-.977 0L.488 10.945a.98.98 0 0 0-.488.846v6.573a.98.98 0 0 0 .488.847l5.693 3.286a.981.981 0 0 0 .977 0l5.692-3.286a.98.98 0 0 0 .489-.846V6.618l.072-.041 3.92-2.263 3.99 2.305v4.609l-3.99 2.304-2.63-1.517v3.092l2.14 1.236a.981.981 0 0 0 .978 0v-.001Z"/></svg>
 <p>===============================================================================</p>
 <h1 id="-resource-operations-unified-api-for-windows-res-file-management">  Resource Operations - Unified API for Windows .RES file management</h1>
 <p>  This unit provides a clean, consistent interface for all resource operations.
@@ -220,6 +217,15 @@ Example: ResOp_ImportResource(<span class="hljs-string">'image.png'</span>, <spa
   <span class="hljs-number">3</span> = Don<span class="hljs-symbol">'t</span> ask <span class="hljs-keyword">for</span> multiple choices
   <span class="hljs-number">4</span> = No dialogs at <span class="hljs-keyword">all</span>
 Example: ResOp_ExportResource(<span class="hljs-symbol">'MAINICON</span>', '<span class="hljs-number">14</span>', <span class="hljs-number">2</span>);  // Quick export
+</code></pre><p>  ResOp_ExportResToFile(const ResourceName, ResTypeName, DestFile: string): Boolean;</p>
+<p>   Exports a resource to an external file without any user interaction.
+   Returns True on success, False on failure. Use ResOp_GetLastError to retrieve the error message.
+  Note: For resources that consist of multiple images (e.g., icon groups), this function will export only the first image. For full control over groups, use ResOp_ExportResource.</p>
+<p>  Example:</p>
+<pre><code><span class="hljs-keyword">if</span> <span class="hljs-type">ResOp_ExportResToFile</span>(<span class="hljs-symbol">'DOCUMENTATION_CSS'</span>, <span class="hljs-symbol">'CSS'</span>, <span class="hljs-symbol">'documentation</span>.css') <span class="hljs-keyword">then</span>
+  <span class="hljs-type">WriteLn</span>(<span class="hljs-symbol">'Exported</span> successfully')
+<span class="hljs-keyword">else</span>
+  <span class="hljs-type">WriteLn</span>(<span class="hljs-symbol">'Error</span>: <span class="hljs-string">', ResOp_GetLastError);     </span>
 </code></pre><h2 id="-utilities">  --- UTILITIES</h2>
 <p>  ResOp_GetLastError: string</p>
 <pre><code><span class="hljs-attribute">Get</span> the <span class="hljs-literal">last</span> <span class="hljs-literal">error</span> message from any failed operation.
@@ -361,5 +367,6 @@ Result.Combined.SaveToFile(&#39;icon.ico&#39;);</p>
 <span class="hljs-keyword">for</span> I := <span class="hljs-number">0</span> <span class="hljs-keyword">to</span> High(<span class="hljs-keyword">Result</span>.ImageStreams) <span class="hljs-keyword">do</span>
 <span class="hljs-keyword">if</span> <span class="hljs-keyword">Result</span>.ImageStreams[I] &lt;&gt; <span class="hljs-keyword">nil</span> <span class="hljs-keyword">then</span>
   <span class="hljs-keyword">Result</span>.ImageStreams[I].Free;
-</body></html>
 </code></pre><p>  =============================================================================</p>
+
+</body></html>

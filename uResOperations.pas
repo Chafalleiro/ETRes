@@ -274,6 +274,17 @@ unit uResOperations;
       4 = No dialogs at all
     Example: ResOp_ExportResource('MAINICON', '14', 2);  // Quick export
 
+  ResOp_ExportResToFile(const ResourceName, ResTypeName, DestFile: string): Boolean;
+    Exports a resource to an external file without any user interaction.
+    Returns True on success, False on failure. Use ResOp_GetLastError to retrieve the error message.
+    Note: For resources that consist of multiple images (e.g., icon groups), this function
+          will export only the first image. For full control over groups, use ResOp_ExportResource.
+
+    Example:
+      if ResOp_ExportResToFile('DOCUMENTATION_CSS', 'CSS', 'documentation.css') then
+        WriteLn('Exported successfully')
+      else
+        WriteLn('Error: ', ResOp_GetLastError);
 
   --- UTILITIES ----------------------------------------------------------------
 
@@ -317,7 +328,8 @@ unit uResOperations;
 interface
 
 uses
-  uResDefs, uResManager, uResFileIO, uResFile, uDebug, Classes, SysUtils;
+  uResDefs, uResManager, uResFileIO, uResFile, uMimeDetect, uDebug,
+  Classes, SysUtils;
 
   //==============================================================================
   // CONSTANTS
@@ -438,6 +450,8 @@ function ResOp_ImportResource(const FileName: string; const ResourceName: string
 //==============================================================================
 
 function ResOp_ExportResource(const ResourceName, ResTypeName: string; Param: integer): boolean;
+
+function ResOp_ExportResToFile(const ResourceName, ResTypeName, DestFile: string): Boolean;
 
 //==============================================================================
 // UTILITY FUNCTIONS
@@ -979,6 +993,45 @@ begin
   Result := TResFileIO.ExportResource(ResourceName, ResTypeName, Param);
   if not Result then
     SetLastError('Export failed');
+end;
+
+function ResOp_ExportResToFile(const ResourceName, ResTypeName, DestFile: string): Boolean;
+var
+  PreparedStream: TMemoryStream;
+  MimeType: TMimeType;
+begin
+  Result := False;
+  PreparedStream := TResFileIO.PrepareResourceForSave(ResourceName, ResTypeName, 4); // Modo silencioso
+  if PreparedStream = nil then
+  begin
+    SetLastError('Resource cannot be exported as a single file (maybe a group with multiple images)');
+    Exit;
+  end;
+  try
+    // Detectar si es texto y eliminar el posible null terminator sobrante
+    PreparedStream.Position := 0;
+    MimeType := TMimeDetector.DetectFromStream(PreparedStream);
+    if MimeType in [mtText, mtHtml, mtXml, mtJson, mtCss, mtJavaScript, mtRtf] then
+    begin
+      if PreparedStream.Size > 0 then
+      begin
+        PreparedStream.Position := PreparedStream.Size - 1;
+        if PreparedStream.ReadByte = 0 then
+        begin
+          // Recortar el stream eliminando el último byte
+          PreparedStream.Size := PreparedStream.Size - 1;
+        end;
+      end;
+    end;
+    // Guardar el archivo (sin el null)
+    PreparedStream.Position := 0;
+    PreparedStream.SaveToFile(DestFile);
+    Result := True;
+  except
+    on E: Exception do
+      SetLastError('Error saving file: ' + E.Message);
+  end;
+  PreparedStream.Free;
 end;
 
 //==============================================================================
